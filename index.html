@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TopUp Shop - Modal 0 (GitHub Pages)</title>
+  <style>
+    /* Simple, mobile-first styling */
+    :root{--accent:#ff6b6b;--muted:#666}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;line-height:1.4;margin:0;background:#fff}
+    header{background:linear-gradient(135deg,#ffecec,#fff);padding:28px 18px;border-bottom:1px solid #eee}
+    .container{max-width:900px;margin:0 auto;padding:18px}
+    h1{margin:0 0 6px;font-size:22px}
+    p.lead{margin:0;color:var(--muted)}
+    .card{border:1px solid #eee;border-radius:12px;padding:14px;margin-top:16px}
+    .price-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+    .price{background:#fff;padding:10px;border-radius:8px;border:1px dashed #f0f0f0}
+    .price b{display:block;font-size:18px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .btn{background:var(--accent);color:#fff;padding:10px 12px;border-radius:8px;text-decoration:none;display:inline-block}
+    .ghost{background:#f7f7f7;color:#222}
+    label{display:block;margin-top:10px;font-weight:600}
+    input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid #ddd;margin-top:6px}
+    footer{padding:18px;text-align:center;color:#999;font-size:13px}
+    .flex{display:flex;gap:10px;align-items:center}
+    .small{font-size:12px;color:var(--muted)}
+    @media(min-width:700px){h1{font-size:28px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>TopUp Shop - Modal 0</h1>
+      <p class="lead">Website statis siap dipakai di GitHub Pages. Tanpa backend, tanpa biaya — sistem order lewat email (mailto) atau copy order. Kamu tinggal deploy ke GitHub.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Daftar Harga (Contoh)</h2>
+      <div class="price-list" id="priceList">
+        <div class="price"><b>86 DM</b><div class="small">Mobile Legends</div><div>Rp 25.000</div></div>
+        <div class="price"><b>172 DM</b><div class="small">Mobile Legends</div><div>Rp 49.000</div></div>
+        <div class="price"><b>257 DM</b><div class="small">Mobile Legends</div><div>Rp 73.000</div></div>
+        <div class="price"><b>5.000 UC</b><div class="small">PUBG</div><div>Rp 150.000</div></div>
+      </div>
+      <div class="actions">
+        <a class="btn" id="btnOrderNow">Order Sekarang (Email)</a>
+        <a class="btn ghost" id="btnCopy">Copy Order</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Form Order</h2>
+      <form id="orderForm" onsubmit="return prepareOrder()">
+        <label>Game / Layanan</label>
+        <select id="service">
+          <option value="Mobile Legends">Mobile Legends</option>
+          <option value="Free Fire">Free Fire</option>
+          <option value="PUBG">PUBG</option>
+          <option value="Genshin">Genshin Impact</option>
+        </select>
+
+        <label>Nominal / Paket</label>
+        <input id="nominal" placeholder="Contoh: 86 DM atau 5000 UC" required />
+
+        <label>ID & Server / Username</label>
+        <input id="playerId" placeholder="ID & Server (untuk ML: 12345678 / 1)" required />
+
+        <label>Nama Pembeli</label>
+        <input id="buyerName" placeholder="Nama lengkap atau nickname" required />
+
+        <label>Metode Bayar (contoh: OVO / DANA / QRIS / Transfer)</label>
+        <input id="payMethod" placeholder="Metode pembayaran" required />
+
+        <label>Catatan (opsional)</label>
+        <textarea id="note" rows="3" placeholder="Catatan tambahan..."></textarea>
+
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button class="btn" type="submit">Buat Email Order</button>
+          <button class="btn ghost" type="button" onclick="copyOrder()">Copy ke Clipboard</button>
+        </div>
+      </form>
+      <p class="small">Cara kerja: setelah pembeli bayar ke kamu, kamu kirim email order ini ke supplier. Karena ini statis (no backend), gunakan email atau kirim via WhatsApp ke supplier.</p>
+    </section>
+
+    <section class="card">
+      <h2>Panduan Singkat Deploy ke GitHub Pages</h2>
+      <ol class="small">
+        <li>Buat akun GitHub (jika belum).</li>
+        <li>Buat repository baru bernama <code>nama-kamu.github.io</code> (untuk user pages) atau repo apa saja untuk project pages.</li>
+        <li>Upload file HTML ini (mis. <code>index.html</code>).</li>
+        <li>Aktifkan GitHub Pages di Settings → Pages → pilih branch main dan folder root → Save.</li>
+        <li>Dalam beberapa menit, website aktif di <code>https://username.github.io</code>.</li>
+      </ol>
+      <p class="small">Jika mau order lewat form ke email supplier, ganti nilai <code>SUPPLIER_EMAIL</code> di bagian script sesuai email supplier.</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">© TopUp Shop • Buat dengan modal 0 • Deploy ke GitHub Pages</div>
+  </footer>
+
+  <script>
+    // Default supplier email — ganti sesuai suppliermu setelah deploy
+    const SUPPLIER_EMAIL = 'supplier@example.com';
+
+    function prepareOrder(){
+      const s = document.getElementById('service').value;
+      const n = document.getElementById('nominal').value;
+      const id = document.getElementById('playerId').value;
+      const name = document.getElementById('buyerName').value;
+      const pay = document.getElementById('payMethod').value;
+      const note = document.getElementById('note').value;
+
+      const body = `Order TopUp%0A%0ALayanan: ${encodeURIComponent(s)}%0ANominal: ${encodeURIComponent(n)}%0AID/Username: ${encodeURIComponent(id)}%0ANama Pembeli: ${encodeURIComponent(name)}%0AMetode Bayar: ${encodeURIComponent(pay)}%0ACatatan: ${encodeURIComponent(note)}%0A%0A---%0AIni pesan dibuat otomatis dari website TopUp Shop.`;
+
+      // mailto link
+      const mailto = `mailto:${SUPPLIER_EMAIL}?subject=${encodeURIComponent('ORDER TOPUP - '+s+' - '+n)}&body=${body}`;
+      window.location.href = mailto; // opens user's email client
+      return false; // prevent actual form submit
+    }
+
+    function copyOrder(){
+      const s = document.getElementById('service').value;
+      const n = document.getElementById('nominal').value;
+      const id = document.getElementById('playerId').value;
+      const name = document.getElementById('buyerName').value;
+      const pay = document.getElementById('payMethod').value;
+      const note = document.getElementById('note').value;
+      const text = `ORDER TOPUP\nLayanan: ${s}\nNominal: ${n}\nID/Username: ${id}\nNama Pembeli: ${name}\nMetode Bayar: ${pay}\nCatatan: ${note}`;
+      navigator.clipboard.writeText(text).then(()=>{
+        alert('Order disalin ke clipboard. Kamu bisa paste ke WhatsApp / Email supplier.');
+      });
+    }
+
+    // Quick buttons
+    document.getElementById('btnOrderNow').addEventListener('click', ()=>{
+      // prefill a sample and open mail
+      document.getElementById('service').value='Mobile Legends';
+      document.getElementById('nominal').value='86 DM';
+      document.getElementById('playerId').value='ID/Server';
+      document.getElementById('buyerName').value='Nama Pembeli';
+      document.getElementById('payMethod').value='OVO';
+      prepareOrder();
+    });
+    document.getElementById('btnCopy').addEventListener('click', ()=>{
+      document.getElementById('service').value='Mobile Legends';
+      document.getElementById('nominal').value='86 DM';
+      document.getElementById('playerId').value='ID/Server';
+      document.getElementById('buyerName').value='Nama Pembeli';
+      document.getElementById('payMethod').value='OVO';
+      copyOrder();
+    });
+  </script>
+
+  <!--
+    README:
+    - Ganti SUPPLIER_EMAIL di script dengan email supplier / alamat emailmu.
+    - Untuk integrasi WhatsApp langsung, ubah `prepareOrder` agar membuka `https://wa.me/62{nomor}?text=${encodeURIComponent(text)}`
+    - Jika ingin form otomatis kirim ke Telegram/API, butuh backend; untuk modal 0 gunakan mailto atau copy ke clipboard.
+  -->
+</body>
+</html>
