@@ -3,62 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Top Up Game Znafla</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Top Up Otomatis</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 500px; margin: 30px auto; padding: 20px; }
+    label, select, input { display: block; width: 100%; margin-bottom: 15px; }
+    button { padding: 10px; width: 100%; background-color: #007bff; color: white; border: none; cursor: pointer; }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Top Up Game Znafla</h1>
-    <p>Top up cepat, aman, tanpa ribet!</p>
-  </header>
-  <main>
-    <section id="products">
-      <h2>Produk Top Up</h2>
-      <ul>
-        <li>Diamond Mobile Legends - Rp 10.000</li>
-        <li>Diamond Free Fire - Rp 15.000</li>
-        <li>UC PUBG Mobile - Rp 20.000</li>
-      </ul>
-    </section>
-    <section id="order">
-      <h2>Form Order</h2>
-      <form id="orderForm">
-        <label for="game">Pilih Game:</label>
-        <select id="game" name="game" required>
-          <option value="">--Pilih Game--</option>
-          <option value="Mobile Legends">Mobile Legends</option>
-          <option value="Free Fire">Free Fire</option>
-          <option value="PUBG Mobile">PUBG Mobile</option>
-        </select>
+  <h1>Order Top Up Game</h1>
+  <form id="orderForm">
+    <label>Pilih Game:</label>
+    <select id="game" required>
+      <option value="">--Pilih Game--</option>
+      <option value="ml">Mobile Legends</option>
+      <option value="ff">Free Fire</option>
+      <option value="pubg">PUBG Mobile</option>
+    </select>
 
-        <label for="idgame">ID Game:</label>
-        <input type="text" id="idgame" name="idgame" required placeholder="Masukkan ID Game" />
+    <label>ID Game:</label>
+    <input type="text" id="idgame" required placeholder="Masukkan ID Game" />
 
-        <label for="nominal">Nominal:</label>
-        <select id="nominal" name="nominal" required>
-          <option value="">--Pilih Nominal--</option>
-          <option value="Rp 10.000">Rp 10.000</option>
-          <option value="Rp 15.000">Rp 15.000</option>
-          <option value="Rp 20.000">Rp 20.000</option>
-        </select>
+    <label>Nominal:</label>
+    <select id="nominal" required>
+      <option value="">--Pilih Nominal--</option>
+      <option value="10000">Rp 10.000</option>
+      <option value="15000">Rp 15.000</option>
+      <option value="20000">Rp 20.000</option>
+    </select>
 
-        <label for="payment">Metode Pembayaran:</label>
-        <select id="payment" name="payment" required>
-          <option value="">--Pilih Metode--</option>
-          <option value="Gopay">Gopay</option>
-          <option value="Dana">Dana</option>
-          <option value="Transfer Bank">Transfer Bank</option>
-        </select>
+    <label>Metode Pembayaran:</label>
+    <select id="payment" required>
+      <option value="">--Pilih Metode--</option>
+      <option value="gopay">Gopay</option>
+      <option value="dana">Dana</option>
+      <option value="bank">Transfer Bank</option>
+    </select>
 
-        <button type="submit">Kirim Order</button>
-      </form>
-    </section>
-  </main>
+    <button type="submit">Order Sekarang</button>
+  </form>
 
-  <footer>
-    <p>Hubungi: <a href="https://wa.me/6281234567890" target="_blank">WhatsApp Znafla</a></p>
-  </footer>
+  <div id="result" style="margin-top:20px;"></div>
 
-  <script src="script.js"></script>
+  <script>
+    const form = document.getElementById('orderForm');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      resultDiv.textContent = 'Memproses order...';
+
+      const data = {
+        game: document.getElementById('game').value,
+        idgame: document.getElementById('idgame').value.trim(),
+        nominal: document.getElementById('nominal').value,
+        payment: document.getElementById('payment').value
+      };
+
+      try {
+        const res = await fetch('http://localhost:3000/api/order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+
+        if (res.ok) {
+          resultDiv.innerHTML = `<p>Order berhasil dibuat!<br>Response: <pre>${JSON.stringify(json, null, 2)}</pre></p>`;
+        } else {
+          resultDiv.textContent = `Error: ${json.error || 'Tidak diketahui'}`;
+        }
+      } catch (err) {
+        resultDiv.textContent = 'Gagal menghubungi server: ' + err.message;
+      }
+    });
+  </script>
 </body>
 </html>
